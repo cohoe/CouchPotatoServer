@@ -855,7 +855,14 @@ Remove it if you want it to be renamed (again, or at least let it try again)
                         raise
             elif move_type == 'copy':
                 log.info('Copying "%s" to "%s"', (old, dest))
-                shutil.copy(old, dest)
+                try:
+                    shutil.copy(old, dest)
+                except:
+                    exists = os.path.exists(dest)
+                    if exists and os.path.getsize(old) == os.path.getsize(dest):
+                        log.error('Successfully copied file "%s", but something went wrong: %s', (dest, traceback.format_exc()))
+                    else:
+                        log.error('Failed to copy file "%s" to "%s": %s', (old, dest, traceback.format_exc()))
             elif move_type == 'symlink_reversed':
                 log.info('Reverse symlink "%s" to "%s"', (old, dest))
                 try:

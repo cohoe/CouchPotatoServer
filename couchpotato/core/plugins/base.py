@@ -124,7 +124,10 @@ class Plugin(object):
         try:
             if not os.path.isdir(path):
                 os.makedirs(path, Env.getPermission('folder'))
-                os.chmod(path, Env.getPermission('folder'))
+                try:
+                    os.chmod(path, Env.getPermission('folder'))
+                except:
+                    log.error('Failed writing permission to directory "%s": %s', (path, traceback.format_exc()))
             return True
         except Exception as e:
             log.error('Unable to create folder "%s": %s', (path, e))
